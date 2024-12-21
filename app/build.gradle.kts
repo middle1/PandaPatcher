@@ -16,8 +16,8 @@ android {
         applicationId = "toolkit.patcher"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2029
-        versionName = "4.6"
+        versionCode = 4700
+        versionName = "4.7"
     }
 
     signingConfigs {
