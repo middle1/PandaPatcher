@@ -1,6 +1,12 @@
 package toolkit.patcher;
 
 import android.util.Log;
+
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+
+import dalvik.system.DexFile;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -66,5 +72,26 @@ public class XposedHelper {
             if (BuildConfig.DEBUG)
                 XposedBridge.log("E/" + MainHook.TAG + " " + Log.getStackTraceString(e));
         }
+    }
+    public static Set<Class<?>> findClassesByPrefix(String prefix, ClassLoader classLoader) {
+        Set<Class<?>> classes = new HashSet<>();
+        try {
+            Object pathList = XposedHelpers.getObjectField(classLoader, "pathList");
+            Object[] dexElements = (Object[]) XposedHelpers.getObjectField(pathList, "dexElements");
+            for (Object dexElement : dexElements) {
+                DexFile dexFile = (DexFile) XposedHelpers.getObjectField(dexElement, "dexFile");
+                Enumeration<String> entries = dexFile.entries();
+                while (entries.hasMoreElements()) {
+                    String className = entries.nextElement();
+                    if (className.startsWith(prefix)) {
+                        classes.add(Class.forName(className, false, classLoader));
+                    }
+                }
+            }
+        } catch (Throwable e) {
+            if (BuildConfig.DEBUG)
+                XposedBridge.log("E/" + MainHook.TAG + " " + Log.getStackTraceString(e));
+        }
+        return classes;
     }
 }
