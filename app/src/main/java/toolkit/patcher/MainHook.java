@@ -1,5 +1,8 @@
 package toolkit.patcher;
 
+import android.app.Application;
+import android.widget.Toast;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -14,6 +17,20 @@ public class MainHook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         if (lpparam.packageName.equals("com.panda.mouse")){
+            XposedBridge.log(TAG + " Inited. Package found: "+lpparam.packageName);
+            Class<?> main_klass = XposedHelpers.findClassIfExists("com.chaozhuo.gameassistant.XApp", lpparam.classLoader);
+            if(main_klass != null){
+                XposedHelpers.findAndHookMethod(main_klass, "onCreate", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        Application currentApp = (Application) param.thisObject;
+                        if(currentApp != null){
+                            Toast.makeText(currentApp, "Moded by @Middle1221\nFeatures: License bypass", 1).show();
+                        }
+                    }
+                });
+            }
             Set<Class<?>> classes = XposedHelper.findClassesByPrefix("com.chaozhuo.gameassistant.LicenseCheckerActivity$", lpparam.classLoader);
             for (Class<?> clazz : classes) {
                 XposedHelper.findAndHookMethod(clazz, "dontAllow", int.class, new XC_MethodHook() {
