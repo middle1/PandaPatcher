@@ -16,8 +16,8 @@ android {
         applicationId = "toolkit.patcher"
         minSdk = 28
         targetSdk = 35
-        versionCode = 4800
-        versionName = "4.8"
+        versionCode = 5000
+        versionName = "5.0"
         signingConfig = signingConfigs.getByName("debug")
     }
 
