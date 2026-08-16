@@ -2,5 +2,6 @@
 <resources>
     <string-array name="scope">
         <item>com.panda.mouse</item>
+        <item>com.panda.gamepad</item>
     </string-array>
 </resources>
